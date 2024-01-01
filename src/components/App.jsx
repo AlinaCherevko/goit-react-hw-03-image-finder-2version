@@ -5,8 +5,6 @@ import Button from './Button/Button';
 import Loader from './Loader/Loader';
 import { getData } from 'servises/api';
 import Modal from './Modal/Modal';
-// import Modal from './Modal/Modal';
-// // import Modal from './Modal/Modal';
 
 export class App extends Component {
   state = {
@@ -26,7 +24,7 @@ export class App extends Component {
     this.setState({
       searchValue: value,
       hits: [],
-      // status: 'idle',
+      status: 'idle',
       page: 1,
       large: '',
       tags: '',
@@ -48,9 +46,15 @@ export class App extends Component {
     }));
   };
   componentDidMount = () => {
-    const stringifiedHits = localStorage.getItem('hits');
-    const hits = JSON.parse(stringifiedHits);
-    this.setState({ hits });
+    // Json.parse() ми огортаємо в try, catch щоб уникнути падіння скрипта якщо прочитали невалідний JSON
+    try {
+      const stringifiedHits = localStorage.getItem('hits');
+      const hits = JSON.parse(stringifiedHits);
+      this.setState({ hits });
+    } catch (error) {
+      this.setState({ error: error.message, status: 'error' });
+      console.log(error.message);
+    }
   };
   componentDidUpdate = async (prevProps, prevState) => {
     if (
